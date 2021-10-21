@@ -8,34 +8,39 @@ namespace BetterQuiz
     {
         static void Main(string[] args)
         {
-            StartQuiz();
-            Console.WriteLine("done man");
-            Console.ReadLine();
+            //Skapa en variabel så man kan start om i slutet av quizet
+            bool playing = true;
 
-
-            //Hälsa på användaren
-            GreetUser();
-            //Klar med att häsla på användaren
-
-            //Ge användaren alternativ till vad den vill göra
-            bool doneChoices = false;
-            string answer;
-            while (!doneChoices)
+            while (playing)
             {
-                answer = PlayOrAddQuestion();
-                if (answer == "play")
+                //Hälsa på användaren
+                GreetUser();
+
+                //Ge användaren alternativ till vad den vill göra
+                bool doneChoices = false;
+                string answer;
+                while (!doneChoices)
                 {
-                    doneChoices = true;
-                    StartQuiz();
+                    answer = PlayOrAddQuestion();
+                    if (answer.ToLower() == "play")
+                    {
+                        doneChoices = true;
+                        StartQuiz();
+                    }
+                    else if (answer.ToLower() == "add")
+                    {
+                        doneChoices = true;
+                        AddQuestion();
+                    }
                 }
-                else if (answer == "add")
-                {
-                    doneChoices = true;
-                }
+                //Nu vet vi redan vad användaren vill göra och vi har startat den metoden
+
+                //Fråga om användaren vill starta om igen
+                playing = SimpleYesOrNo("Do you want to start the Quiz 2.0 again? (y/n)");
+                Console.Clear();
             }
-            //Nu vet vi redan vad användaren vill göra och vi har startat den metoden
 
-
+            Console.Clear();
 
             Console.ReadLine();
         }
@@ -56,15 +61,16 @@ namespace BetterQuiz
             Console.WriteLine("Would you like to play the quiz or add a question to it?");
             Console.WriteLine("Answer with ");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("\"play\" ");
+            Console.Write("\"Play\" ");
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write("or ");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("\"add\"\n");
+            Console.Write("\"Add\"\n");
             Console.ForegroundColor = ConsoleColor.White;
 
             return Console.ReadLine().ToLower();
         }
+
 
         private static void StartQuiz()
         {
@@ -141,6 +147,10 @@ namespace BetterQuiz
                             Console.WriteLine("Correct, 1 point awarded!");
                             points++;
                         }
+                        else
+                        {
+                            Console.WriteLine("Wrong, no points awarded!");
+                        }
                     }
                     else
                     {
@@ -176,11 +186,140 @@ namespace BetterQuiz
             {
                 Console.WriteLine("Wow, you did a great job. 5/5, not bad");
             }
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("Press any key to continue!");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.ReadLine();
+            Console.Clear();
         }
 
         private static void AddQuestion()
         {
+            //Fixa loop boolen och fixa en clear så man kan läsa i konsolen 
+            Console.Clear();
+            bool happy = false;
 
+            while (!happy)
+            {
+                //Lägg till alla variablar som kommer användas
+                //Det är viktigt dem är här så att om man startar om (i loopen) så är den inte direkt true och spammar saker (Testat...)
+                string question = ""; bool questionCorrect = false;
+                string answer = ""; bool answerCorrect = false;
+                string alt1 = ""; bool alt1Correct = false;
+                string alt2 = ""; bool alt2Correct = false;
+                List<char[]> validityCheck = new List<char[]>();
+
+                Console.WriteLine("Welcome to adding your own question!");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Your question, answer or alternatives can't contain ';' the semicolon!");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                while (!questionCorrect)
+                {
+                    Console.WriteLine("Write the question you want to add:");
+                    question = Console.ReadLine();
+                    Console.Clear();
+                    Console.WriteLine($"Your question is '{question}'");
+                    questionCorrect = SimpleYesOrNo("Is it correct? (y/n)");
+                    Console.Clear();
+                }
+
+                while (!answerCorrect)
+                {
+                    Console.WriteLine("Write the answer to your question:");
+                    answer = Console.ReadLine();
+                    Console.Clear();
+                    Console.WriteLine($"The questions answer is '{answer}'");
+                    answerCorrect = SimpleYesOrNo("Is it correct? (y/n)");
+                    Console.Clear();
+                }
+
+                while (!alt1Correct)
+                {
+                    Console.WriteLine("Write the first alternative to your question:");
+                    alt1 = Console.ReadLine();
+                    Console.Clear();
+                    Console.WriteLine($"The first alternative to the answer is '{alt1}'");
+                    alt1Correct = SimpleYesOrNo("Is it correct? (y/n)");
+                    Console.Clear();
+                }
+
+                while (!alt2Correct)
+                {
+                    Console.WriteLine("Write the second alternative to your question:");
+                    alt2 = Console.ReadLine();
+                    Console.Clear();
+                    Console.WriteLine($"The second alternative to the answer is '{alt2}'");
+                    alt2Correct = SimpleYesOrNo("Is it correct? (y/n)");
+                    Console.Clear();
+                }
+
+                validityCheck.Add(question.ToCharArray());
+                validityCheck.Add(answer.ToCharArray());
+                validityCheck.Add(alt1.ToCharArray());
+                validityCheck.Add(alt2.ToCharArray());
+                bool valid = true;
+                foreach (char[] cArr in validityCheck)
+                {
+                    foreach (char c in cArr)
+                    {
+                        if (c == ';')
+                        {
+                            valid = false;
+                        }
+                    }
+                }
+
+                if (valid)
+                {
+                    Console.WriteLine($"Your question is: '{question}'");
+                    Console.WriteLine($"Your answer is: '{answer}'");
+                    Console.WriteLine($"Your first alternative is: '{alt1}'");
+                    Console.WriteLine($"Your second alternative is: '{alt2}'");
+                    happy = SimpleYesOrNo("Are you satisfied with this? (y/n)");
+                    Console.Clear();
+                    if (happy)
+                    {
+                        //Skriv in frågan, svar och alternativ i text dokumentet om användaren är nöjd
+                        string lineToWrite = question + ";" + answer + ";" + alt1 + ";" + alt2;
+                        File.AppendAllText(@"qna.txt", Environment.NewLine + lineToWrite);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Your question contains ';' which is an invalid character!");
+                    Console.WriteLine("Please try writing your question again.");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Press any key to continue!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ReadLine();
+                    Console.Clear();
+                }
+            }
+        }
+
+        private static bool SimpleYesOrNo(string prompt)
+        {
+            bool answer = false;
+            bool gotAnswer = false;
+
+            while (!gotAnswer)
+            {
+                Console.WriteLine(prompt);
+                string again = Console.ReadLine();
+                if (again.ToLower() == "y" || again.ToLower() == "yes")
+                {
+                    answer = true;
+                    gotAnswer = true;
+                }
+                else if (again.ToLower() == "n" || again.ToLower() == "no")
+                {
+                    answer = false;
+                    gotAnswer = true;
+                }
+            }
+
+            return answer;
         }
     }
 }

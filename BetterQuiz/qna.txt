@@ -7,3 +7,4 @@ Which country was the Caesar salad invented in?;Mexico;Greece;Italy
 What is the most abundant metal in the Earth’s crust?;Aluminium;Gold;Iron
 What is the most abundant element in the universe?;Hydrogen;Oxygen;Carbon
 What color is a polar bear’s skin?;Black;White;Pink
+Who is the Author of this quiz?;Samuel;Paul;Caleb
