@@ -1,4 +1,4 @@
-När grundades NTI?;1968;1756;2004
+What year was NTI founded?;1968;1756;2004
 How many languages are written from right to left?;12;9;15
 Worship of Krishna is observed by which Religious Faith?;Hinduism;Buddhism;Christianity
 Demolition of the Berlin wall separating East and West Germany began in what year?;1989;2000;1973
